@@ -5,7 +5,8 @@ import org.keycloak.models.UserModel;
 import org.keycloak.services.managers.AppAuthManager;
 import org.keycloak.services.managers.AuthenticationManager;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
+
 
 public class TwoFactorAuthRestResource {
 
@@ -29,7 +30,7 @@ public class TwoFactorAuthRestResource {
         if (auth == null) {
             var auth = new AppAuthManager.BearerTokenAuthenticator(session);
             auth.authenticate();
-            throw new NotAuthorizedException("Bearer");
+            throw new BadRequestException("Bearer");
         } else if (auth.getUser().getServiceAccountClientLink() == null) {
             throw new ForbiddenException("Not service account");
         } else if (auth.getToken().getRealmAccess() == null || !auth.getToken().getRealmAccess().isUserInRole("manage-2fa")) {
