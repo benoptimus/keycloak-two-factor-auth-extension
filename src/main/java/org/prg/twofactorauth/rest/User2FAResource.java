@@ -16,9 +16,9 @@ import org.keycloak.models.utils.HmacOTP;
 import org.keycloak.utils.CredentialHelper;
 import org.keycloak.utils.TotpUtils;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 public class User2FAResource {
 
@@ -56,7 +56,7 @@ public class User2FAResource {
         }
 
         final RealmModel realm = this.session.getContext().getRealm();
-        final CredentialModel credentialModel = session.userCredentialManager().getStoredCredentialByNameAndType(realm, user, submission.getDeviceName(), OTPCredentialModel.TYPE);
+        final CredentialModel credentialModel = user.credentialManager().getStoredCredentialByNameAndType(submission.getDeviceName(), OTPCredentialModel.TYPE);
         if (credentialModel == null) {
             throw new BadRequestException("device not found");
         }
@@ -65,7 +65,7 @@ public class User2FAResource {
             var otpCredentialProvider = session.getProvider(CredentialProvider.class, "keycloak-otp");
             final OTPCredentialModel otpCredentialModel = OTPCredentialModel.createFromCredentialModel(credentialModel);
             final String credentialId = otpCredentialModel.getId();
-            isCredentialsValid = session.userCredentialManager().isValid(realm, user, new UserCredentialModel(credentialId, otpCredentialProvider.getType(), submission.getTotpCode()));
+            isCredentialsValid = user.credentialManager().isValid(new UserCredentialModel(credentialId, otpCredentialProvider.getType(), submission.getTotpCode()));
         } catch (RuntimeException e) {
             e.printStackTrace();
             throw new InternalServerErrorException("internal error");
@@ -95,7 +95,7 @@ public class User2FAResource {
         }
 
         final RealmModel realm = this.session.getContext().getRealm();
-        final CredentialModel credentialModel = session.userCredentialManager().getStoredCredentialByNameAndType(realm, user, submission.getDeviceName(), OTPCredentialModel.TYPE);
+        final CredentialModel credentialModel = user.credentialManager().getStoredCredentialByNameAndType(submission.getDeviceName(), OTPCredentialModel.TYPE);
         if (credentialModel != null && !submission.isOverwrite()) {
             throw new ForbiddenException("2FA is already configured for device: " + submission.getDeviceName());
         }
