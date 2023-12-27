@@ -16,9 +16,16 @@ import org.keycloak.models.utils.HmacOTP;
 import org.keycloak.utils.CredentialHelper;
 import org.keycloak.utils.TotpUtils;
 
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.models.utils.ModelToRepresentation;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import java.util.stream.Collectors;
+import java.util.List;
+import java.util.stream.*;
 
 public class User2FAResource {
 
@@ -107,5 +114,4 @@ public class User2FAResource {
 
         return Response.noContent().build();
     }
-
 }
