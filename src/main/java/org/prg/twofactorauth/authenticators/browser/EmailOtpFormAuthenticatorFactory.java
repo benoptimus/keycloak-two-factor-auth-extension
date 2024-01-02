@@ -1,4 +1,4 @@
-package org.prg.twofactorauth.action;
+package org.prg.twofactorauth.authenticators.browser;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import org.prg.twofactorauth.dto.EmailConstants;
 import com.google.auto.service.AutoService;
 
 @AutoService(AuthenticatorFactory.class)
-public class EmailOtpActionFactory implements AuthenticatorFactory{
+public class EmailOtpFormAuthenticatorFactory implements AuthenticatorFactory{
     
     @Override
     public String getId() {
@@ -24,11 +24,6 @@ public class EmailOtpActionFactory implements AuthenticatorFactory{
     @Override
     public String getDisplayType() {
         return "Email OTP";
-    }
-
-    @Override
-    public String getDisplayText() {
-        return "Generate Backup Codes";
     }
 
     @Override
@@ -79,7 +74,7 @@ public class EmailOtpActionFactory implements AuthenticatorFactory{
 
     @Override
     public Authenticator create(KeycloakSession session) {
-        return new EmailOtpAction(session);
+        return new EmailOtpFormAuthenticator(session);
     }
 
     @Override

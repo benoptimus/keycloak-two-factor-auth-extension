@@ -1,4 +1,4 @@
-package org.prg.twofactorauth.action;
+package org.prg.twofactorauth.authenticators.browser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,10 +29,10 @@ import org.prg.twofactorauth.dto.EmailConstants;
 import lombok.extern.jbosslog.JBossLog;
 
 @JBossLog
-public class EmailOtpAction extends AbstractUsernameFormAuthenticator{
+public class EmailOtpFormAuthenticator extends AbstractUsernameFormAuthenticator{
     private final KeycloakSession session;
 
-    public EmailOtpAction(KeycloakSession session) {
+    public EmailOtpFormAuthenticator(KeycloakSession session) {
         this.session = session;
     }
 
