@@ -5,6 +5,7 @@ import org.keycloak.authentication.AuthenticationFlow;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.AuthenticationFlowException;
+import org.keycloak.authentication.ConfigurableAuthenticatorFactory;
 import org.keycloak.common.util.SecretGenerator;
 import org.keycloak.credential.CredentialModel;
 import org.keycloak.credential.CredentialProvider;
@@ -41,6 +42,7 @@ import org.keycloak.models.credential.PasswordCredentialModel;
 import org.keycloak.models.utils.Base32;
 import org.keycloak.models.utils.HmacOTP;
 import org.keycloak.provider.ProviderConfigProperty;
+import org.keycloak.services.resources.admin.AuthenticationManagementResource;
 import org.keycloak.theme.Theme;
 import org.keycloak.utils.CredentialHelper;
 import org.keycloak.utils.TotpUtils;
@@ -52,6 +54,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -246,10 +249,8 @@ public class User2FAResource {
         int ttl = 300;
         String credentialName = TokenConstants.USR_CRED_EMAIL_CODE;
         String actionName = "Email";
-        if(typeCode==TYPE_CODE.EMAIL){
-            //update base on property config
-        }
-        else if(typeCode==TYPE_CODE.SMS){
+
+        if(typeCode==TYPE_CODE.SMS){
             credentialName = TokenConstants.USR_CRED_SMS_CODE;
             actionName="Sms";
         }
@@ -281,7 +282,7 @@ public class User2FAResource {
         Long time = System.currentTimeMillis();
         CredentialModel credential = new CredentialModel();
         PasswordCredentialModel encodedBackupCode = passwordHashProvider.encodedCredential(code, tokenCodeConfig.getBackupCodeHashIterations());
-        credential.setType(TokenConstants.USR_CRED_EMAIL_CODE);
+        credential.setType(credentialName);
         credential.setCreatedDate(time);
 
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm"); 
@@ -328,7 +329,7 @@ public class User2FAResource {
         String code = generateCode(TYPE_CODE.SMS);
         
         String mobileNumber = user.getFirstAttribute(SmsConstants.MOBILE_NUMBER_FIELD);
-        KeycloakContext context = session.getContext();
+        
         log.info("Send authentication code via sms to user : "+user.getEmail());
         if (mobileNumber == null || mobileNumber.isEmpty() || mobileNumber.isBlank()) {
             log.warnf("Could not send access code sms due to missing phone number. realm=%s user=%s", realm.getId(), user.getUsername());
@@ -336,7 +337,9 @@ public class User2FAResource {
         }
 
        try {
-            AuthenticatorConfigModel config = context.getAuthenticatorConfig();
+        
+            AuthenticatorConfigModel config = getConfigAuthenticator(SmsConstants.ALIAS_DIRECT_GRANT);
+            log.info(config.getConfig().get(SmsConstants.CODE_LENGTH));
             
 			Theme theme = session.theme().getTheme(Theme.Type.LOGIN);
 			Locale locale = session.getContext().resolveLocale(user);
@@ -348,5 +351,10 @@ public class User2FAResource {
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
+    }
+
+
+    private AuthenticatorConfigModel getConfigAuthenticator(String authenticatorAliasName){
+        return session.getContext().getRealm().getAuthenticatorConfigByAlias(authenticatorAliasName);
     }
 }

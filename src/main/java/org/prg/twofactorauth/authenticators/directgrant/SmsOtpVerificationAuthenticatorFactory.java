@@ -9,7 +9,6 @@ import org.keycloak.models.AuthenticationExecutionModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.provider.ProviderConfigProperty;
-import org.prg.twofactorauth.authenticators.browser.SmsOtpFormAuthenticator;
 import org.prg.twofactorauth.dto.SmsConstants;
 import org.prg.twofactorauth.dto.TokenConstants;
 
@@ -24,12 +23,12 @@ public class SmsOtpVerificationAuthenticatorFactory implements AuthenticatorFact
 
 	@Override
 	public String getDisplayType() {
-		return "SMS OTP Authentication";
+		return "SMS OTP Verification";
 	}
 
 	@Override
 	public String getHelpText() {
-		return "Validates an OTP sent via SMS to the users mobile phone.";
+		return "Validates an OTP sent via SMS direct grant flow to the users mobile phone.";
 	}
 
 	@Override

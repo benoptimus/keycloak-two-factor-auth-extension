@@ -10,6 +10,7 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.provider.ProviderConfigProperty;
 import org.prg.twofactorauth.dto.EmailConstants;
+import org.prg.twofactorauth.dto.TokenConstants;
 
 import com.google.auto.service.AutoService;
 
@@ -24,12 +25,12 @@ public class EmailOtpVerificationAuthenticatorFactory implements AuthenticatorFa
 
     @Override
     public String getDisplayType() {
-        return "Provide email verification code";
+        return "Email OTP verification";
     }
 
     @Override
     public String getReferenceCategory() {
-        return "Verification Email Code Grant";
+       return TokenConstants.USR_CRED_EMAIL_CODE;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class EmailOtpVerificationAuthenticatorFactory implements AuthenticatorFa
 
     @Override
     public String getHelpText() {
-        return "Provide email verification code";
+        return "Validates an OTP sent via email direct grant flow to the users email.";
     }
 
     @Override

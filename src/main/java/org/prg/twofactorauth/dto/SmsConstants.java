@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class SmsConstants {
+	public String ALIAS_DIRECT_GRANT = "sms-otp-authenticator";
 	public String MOBILE_NUMBER_FIELD = "mobile_number";
 	public String CODE = "code";
 	public String CODE_LENGTH = "length";
