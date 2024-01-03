@@ -267,6 +267,11 @@ public class User2FAResource {
             if(item.getCreatedDate()+ (ttl * 1000L)<=System.currentTimeMillis()){
                 user.credentialManager().removeStoredCredentialById(item.getId());
             }
+            else{
+                if(typeCode==TYPE_CODE.SMS){
+                 user.credentialManager().removeStoredCredentialById(item.getId());
+                }
+            }
         }
 
         TokenCodeConfig tokenCodeConfig = TokenCodeConfig.getConfig(session.getContext().getRealm());
