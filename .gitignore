@@ -2,3 +2,7 @@
 target/
 
 .DS_Store
+
+.vscode/
+
+build_and_copy_to_keyclokak.sh
