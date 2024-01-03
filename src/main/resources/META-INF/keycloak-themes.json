@@ -5,6 +5,12 @@
         "types": [
           "email"
         ]
+      },
+      {
+        "name": "keycloak-with-backup-codes",
+        "types": [
+          "account"
+        ]
       }
     ]
   }
