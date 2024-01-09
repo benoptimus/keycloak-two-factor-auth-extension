@@ -2,7 +2,6 @@ package org.prg.twofactorauth.authenticators.directgrant;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -105,15 +104,12 @@ public class SmsOtpVerificationAuthenticator extends BaseDirectGrantAuthenticato
         String enteredCode = formData.getFirst(TokenConstants.SMS_CODE);
        
         UserModel user = context.getUser();
-        int ttl = 0;
 
-        try{
-            ttl = Integer.valueOf(config.getConfig().get(SmsConstants.CODE_TTL));
-        }catch(Exception e){
-            log.errorf(e, "Failed to validate sms code. user=%s", user.getUsername());
+        if(config==null){
             return CODE_STATUS.INVALID;
         }
         
+        int ttl = Integer.valueOf(config.getConfig().get(SmsConstants.CODE_TTL));
         log.info(enteredCode);
         
         TokenCodeConfig tokenCodeConfig = TokenCodeConfig.getConfig(context.getRealm());

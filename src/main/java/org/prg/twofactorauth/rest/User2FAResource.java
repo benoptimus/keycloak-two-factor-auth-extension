@@ -1,11 +1,6 @@
 package org.prg.twofactorauth.rest;
 
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.keycloak.authentication.AuthenticationFlow;
-import org.keycloak.authentication.AuthenticationFlowContext;
-import org.keycloak.authentication.AuthenticationFlowError;
-import org.keycloak.authentication.AuthenticationFlowException;
-import org.keycloak.authentication.ConfigurableAuthenticatorFactory;
 import org.keycloak.common.util.SecretGenerator;
 import org.keycloak.credential.CredentialModel;
 import org.keycloak.credential.CredentialProvider;
@@ -13,11 +8,6 @@ import org.keycloak.credential.hash.PasswordHashProvider;
 import org.keycloak.email.EmailException;
 import org.keycloak.email.EmailTemplateProvider;
 import org.keycloak.events.Errors;
-import org.prg.twofactorauth.authenticators.browser.EmailOtpFormAuthenticator;
-import org.prg.twofactorauth.authenticators.browser.SmsOtpFormAuthenticatorFactory;
-import org.prg.twofactorauth.authenticators.directgrant.EmailOtpVerificationAuthenticator;
-import org.prg.twofactorauth.authenticators.directgrant.EmailOtpVerificationAuthenticatorFactory;
-import org.prg.twofactorauth.dto.BackupCodeConfig;
 import org.prg.twofactorauth.dto.EmailConstants;
 import org.prg.twofactorauth.dto.SmsConstants;
 import org.prg.twofactorauth.dto.TokenCodeConfig;
@@ -31,7 +21,6 @@ import org.prg.twofactorauth.gateway.SmsServiceFactory;
 import lombok.extern.jbosslog.JBossLog;
 
 import org.keycloak.models.AuthenticatorConfigModel;
-import org.keycloak.models.KeycloakContext;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserCredentialModel;
@@ -41,8 +30,6 @@ import org.keycloak.models.credential.OTPCredentialModel;
 import org.keycloak.models.credential.PasswordCredentialModel;
 import org.keycloak.models.utils.Base32;
 import org.keycloak.models.utils.HmacOTP;
-import org.keycloak.provider.ProviderConfigProperty;
-import org.keycloak.services.resources.admin.AuthenticationManagementResource;
 import org.keycloak.theme.Theme;
 import org.keycloak.utils.CredentialHelper;
 import org.keycloak.utils.TotpUtils;
@@ -54,7 +41,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -149,6 +135,38 @@ public class User2FAResource {
         final OTPCredentialModel otpCredentialModel = OTPCredentialModel.createFromPolicy(realm, totpSecret, submission.getDeviceName());
         if (!CredentialHelper.createOTPCredential(this.session, realm, user, submission.getTotpInitialCode(), otpCredentialModel)) {
             throw new BadRequestException("otp registration data is invalid");
+        }
+
+        return Response.noContent().build();
+    }
+
+    @POST
+    @NoCache
+    @Path("deactivate-2fa")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deactivate2FA(){
+        final List<CredentialModel> credentialOtpModels = user.credentialManager()
+                                                .getStoredCredentialsByTypeStream(OTPCredentialModel.TYPE)
+                                        .collect(Collectors.toList());
+        
+        final List<CredentialModel> credentialSmsModels = user.credentialManager()
+                                                .getStoredCredentialsByTypeStream(TokenConstants.USR_CRED_EMAIL_CODE)
+                                        .collect(Collectors.toList());
+        
+        final List<CredentialModel> credentialEmailModels = user.credentialManager()
+                                                .getStoredCredentialsByTypeStream(TokenConstants.USR_CRED_SMS_CODE)
+                                        .collect(Collectors.toList());
+        for(CredentialModel credential : credentialOtpModels){
+            user.credentialManager().removeStoredCredentialById(credential.getId());
+        }
+
+        for(CredentialModel credential : credentialSmsModels){
+            user.credentialManager().removeStoredCredentialById(credential.getId());
+        }
+
+        for(CredentialModel credential : credentialEmailModels){
+            user.credentialManager().removeStoredCredentialById(credential.getId());
         }
 
         return Response.noContent().build();
