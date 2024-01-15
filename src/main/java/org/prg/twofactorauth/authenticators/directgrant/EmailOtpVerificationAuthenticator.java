@@ -89,9 +89,12 @@ public class EmailOtpVerificationAuthenticator extends BaseDirectGrantAuthentica
         MultivaluedMap<String, String> formData = context.getHttpRequest().getDecodedFormParameters();
         String enteredCode = formData.getFirst(TokenConstants.EMAIL_CODE);
        
+        if (enteredCode == null) {
+			return CODE_STATUS.INVALID;
+		}
+
         UserModel user = context.getUser();
         int ttl = EmailConstants.DEFAULT_TTL;
-        log.info(enteredCode);
         
         TokenCodeConfig tokenCodeConfig = TokenCodeConfig.getConfig(context.getRealm());
         PasswordHashProvider passwordHashProvider = session.getProvider(PasswordHashProvider.class,

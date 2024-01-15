@@ -47,6 +47,11 @@ public class TotpVerificationAuthenticator extends BaseDirectGrantAuthenticator{
     public void authenticate(AuthenticationFlowContext context) {
         String code = context.getHttpRequest().getDecodedFormParameters().getFirst("totp");
         
+        if(code==null && context.getExecution().isAlternative()){
+                context.attempted();
+                return;
+            }
+
         if(!context.getUser().credentialManager().isConfiguredFor(OTPCredentialModel.TYPE)){
             context.success();
             return;

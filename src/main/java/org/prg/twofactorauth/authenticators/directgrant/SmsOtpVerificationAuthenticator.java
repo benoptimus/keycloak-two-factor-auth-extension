@@ -103,6 +103,10 @@ public class SmsOtpVerificationAuthenticator extends BaseDirectGrantAuthenticato
         MultivaluedMap<String, String> formData = context.getHttpRequest().getDecodedFormParameters();
         String enteredCode = formData.getFirst(TokenConstants.SMS_CODE);
        
+        if (enteredCode == null) {
+			return CODE_STATUS.INVALID;
+		}
+        
         UserModel user = context.getUser();
 
         if(config==null){
