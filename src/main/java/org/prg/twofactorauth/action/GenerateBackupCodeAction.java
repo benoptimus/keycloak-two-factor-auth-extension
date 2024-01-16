@@ -86,7 +86,7 @@ public class GenerateBackupCodeAction implements RequiredActionProvider {
         return BackupCodeCredentialModel.TYPE;
     }
 
-    protected List<BackupCode> createNewBackupCodes(RealmModel realm, UserModel user, KeycloakSession session) {
+    public List<BackupCode> createNewBackupCodes(RealmModel realm, UserModel user, KeycloakSession session) {
 
         BackupCodeConfig backupCodeConfig = getBackupCodeConfig(realm);
 
@@ -173,7 +173,7 @@ public class GenerateBackupCodeAction implements RequiredActionProvider {
         return formParams.containsKey(LoginActionsService.CANCEL_AIA);
     }
 
-    protected void removeExistingBackupCodesIfPresent(RealmModel realm, UserModel user, KeycloakSession session) {
+    public void removeExistingBackupCodesIfPresent(RealmModel realm, UserModel user, KeycloakSession session) {
 
         SubjectCredentialManager userCredentialManager = user.credentialManager();
         log.debugf("Removing existing backup codes. realm=%s user=%s", realm.getId(), user.getId());

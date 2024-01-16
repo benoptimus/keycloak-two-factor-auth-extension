@@ -8,6 +8,8 @@ import org.keycloak.credential.hash.PasswordHashProvider;
 import org.keycloak.email.EmailException;
 import org.keycloak.email.EmailTemplateProvider;
 import org.keycloak.events.Errors;
+import org.prg.twofactorauth.action.GenerateBackupCodeAction;
+import org.prg.twofactorauth.dto.BackupCode;
 import org.prg.twofactorauth.dto.EmailConstants;
 import org.prg.twofactorauth.dto.SmsConstants;
 import org.prg.twofactorauth.dto.TokenCodeConfig;
@@ -87,7 +89,6 @@ public class User2FAResource {
             throw new BadRequestException("one or more data field for otp validation are blank");
         }
 
-        final RealmModel realm = this.session.getContext().getRealm();
         final CredentialModel credentialModel = user.credentialManager().getStoredCredentialByNameAndType(submission.getDeviceName(), OTPCredentialModel.TYPE);
         if (credentialModel == null) {
             throw new BadRequestException("device not found");
@@ -138,6 +139,19 @@ public class User2FAResource {
         }
 
         return Response.noContent().build();
+    }
+
+    @POST
+    @NoCache
+    @Path("generate-backup-code")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response generateBackupCode(){
+        GenerateBackupCodeAction generateBackupCode = new GenerateBackupCodeAction();
+        RealmModel realm = session.getContext().getRealm();
+        generateBackupCode.removeExistingBackupCodesIfPresent(realm, user, session);
+        List<BackupCode> backupCodes = generateBackupCode.createNewBackupCodes(realm, user, session);
+        return Response.ok(backupCodes).build();
     }
 
     @POST
