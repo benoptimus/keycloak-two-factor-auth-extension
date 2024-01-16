@@ -61,12 +61,13 @@ public class TotpVerificationAuthenticator extends BaseDirectGrantAuthenticator{
         //test all device name later
         final CredentialModel credentialModel = user.credentialManager().getStoredCredentialByNameAndType("mpp-device", OTPCredentialModel.TYPE);
         if(credentialModel == null) {
+            context.getEvent().user(context.getUser());
+            context.getEvent().error(Errors.INVALID_USER_CREDENTIALS);
+            
             if(context.getExecution().isAlternative()){
                 context.attempted();
                 return;
             }
-            context.getEvent().user(context.getUser());
-            context.getEvent().error(Errors.INVALID_USER_CREDENTIALS);
 
             Response challenge = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "invalid_grant", "Invalid user credentials");
             context.failure(AuthenticationFlowError.INVALID_USER, challenge);

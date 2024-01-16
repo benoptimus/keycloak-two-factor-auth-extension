@@ -75,13 +75,13 @@ public class SmsOtpVerificationAuthenticator extends BaseDirectGrantAuthenticato
 
 		CODE_STATUS result = validateCode(context);
         if(result!=CODE_STATUS.VALID){
+            context.getEvent().user(context.getUser());
+            context.getEvent().error(Errors.INVALID_USER_CREDENTIALS);
+            
 			if(context.getExecution().isAlternative()){
                 context.attempted();
                 return;
             }
-
-            context.getEvent().user(context.getUser());
-            context.getEvent().error(Errors.INVALID_USER_CREDENTIALS);
 
             Response challenge = errorResponse(Response.Status.UNAUTHORIZED.getStatusCode(), "invalid_grant", "Invalid user credentials");
             if(result==CODE_STATUS.EXPIRED){

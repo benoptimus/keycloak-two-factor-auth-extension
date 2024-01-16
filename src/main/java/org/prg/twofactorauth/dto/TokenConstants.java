@@ -5,8 +5,10 @@ public class TokenConstants {
     // User credentials (used to persist the sent email code + expiration time cluster wide)
     public static final String USR_CRED_EMAIL_CODE = "email-auth-code";
     public static final String USR_CRED_SMS_CODE = "sms-auth-code";
+    public static final String USR_CRED_BACKUP_CODE = "backup-auth-code";
     public static final String EMAIL_CODE = "emailCode";
     public static final String SMS_CODE = "smsCode";
+    public static final String BACKUP_CODE = "backupCode";
 
 }
 

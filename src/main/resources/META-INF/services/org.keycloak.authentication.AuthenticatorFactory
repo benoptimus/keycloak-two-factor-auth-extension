@@ -19,3 +19,4 @@ org.prg.twofactorauth.authenticators.browser.EmailOtpFormAuthenticatorFactory
 org.prg.twofactorauth.authenticators.directgrant.EmailOtpVerificationAuthenticatorFactory
 org.prg.twofactorauth.authenticators.directgrant.TotpVerificationAuthenticatorFactory
 org.prg.twofactorauth.authenticators.directgrant.SmsOtpVerificationAuthenticatorFactory
+org.prg.twofactorauth.authenticators.directgrant.BackupVerificationAuthenticatorFactory
